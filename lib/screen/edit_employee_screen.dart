@@ -48,9 +48,14 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                addEmployee();
+                editEmployee();
               },
-              icon: const Icon(Icons.save))
+              icon: const Icon(Icons.save)),
+          IconButton(
+              onPressed: () {
+                deleteEmployee();
+              },
+              icon: const Icon(Icons.delete))
         ],
       ),
       body: Padding(
@@ -90,6 +95,27 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
     );
   }
 
+  void deleteEmployee() {
+    _db
+        .deleteEmployee(widget.id)
+        .then((value) => ScaffoldMessenger.of(context).showMaterialBanner(
+              MaterialBanner(
+                backgroundColor: Colors.red,
+                content: Text('Employee deleted: $value',
+                    style: const TextStyle(color: Colors.white)),
+                actions: [
+                  TextButton(
+                      onPressed: () => ScaffoldMessenger.of(context)
+                          .hideCurrentMaterialBanner(),
+                      child: const Text(
+                        'Close',
+                        style: TextStyle(color: Colors.white),
+                      ))
+                ],
+              ),
+            ));
+  }
+
   Future<void> pickDateOfBirth(BuildContext context) async {
     final initialDate = DateTime.now();
     final newDate = await showDatePicker(
@@ -119,18 +145,19 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
     });
   }
 
-  void addEmployee() {
+  void editEmployee() {
     final entity = EmployeeCompanion(
+      id: drift.Value(widget.id),
       userName: drift.Value(_userNameController.text),
       firstName: drift.Value(_firstNameController.text),
       lastName: drift.Value(_lastNameController.text),
       dateOfBirth: drift.Value(_dateOfBirth!),
     );
-    _db.insertEmployee(entity).then(
+    _db.updateEmployee(entity).then(
           (value) => ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(
               backgroundColor: Colors.deepOrange,
-              content: Text('New employee inserted: $value',
+              content: Text('Employee updated: $value',
                   style: const TextStyle(color: Colors.white)),
               actions: [
                 TextButton(
