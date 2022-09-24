@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:drift/drift.dart' as drift;
 
-class AddEmployeeScreen extends StatefulWidget {
-  const AddEmployeeScreen({super.key});
+class EditEmployeeScreen extends StatefulWidget {
+  const EditEmployeeScreen({super.key});
 
   @override
-  State<AddEmployeeScreen> createState() => _AddEmployeeScreenState();
+  State<EditEmployeeScreen> createState() => _EditEmployeeScreenState();
 }
 
-class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
+class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
   late AppDb _db;
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
