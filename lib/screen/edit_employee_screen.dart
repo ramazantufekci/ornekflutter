@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:drift/drift.dart' as drift;
 
 class EditEmployeeScreen extends StatefulWidget {
-  const EditEmployeeScreen({super.key});
+  final int id;
+  const EditEmployeeScreen({super.key, required this.id});
 
   @override
   State<EditEmployeeScreen> createState() => _EditEmployeeScreenState();
@@ -14,6 +15,7 @@ class EditEmployeeScreen extends StatefulWidget {
 
 class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
   late AppDb _db;
+  late EmployeeData _employeeData;
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -24,6 +26,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
   void initState() {
     super.initState();
     _db = AppDb();
+    getEmployee();
   }
 
   @override
@@ -40,7 +43,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Employee'),
+        title: const Text('Edit Employee'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -141,5 +144,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
             ),
           ),
         );
+  }
+
+  Future<void> getEmployee() async {
+    _employeeData = await _db.getEmployee(widget.id);
+    _userNameController.text = _employeeData.userName;
+    _firstNameController.text = _employeeData.firstName;
+    _lastNameController.text = _employeeData.lastName;
+    _dateOfBirthController.text = _employeeData.dateOfBirth.toIso8601String();
   }
 }
