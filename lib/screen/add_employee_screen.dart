@@ -13,6 +13,7 @@ class AddEmployeeScreen extends StatefulWidget {
 }
 
 class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
+  final _formKey = GlobalKey<FormState>();
   late AppDb _db;
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
@@ -54,33 +55,39 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            CustomTextFormField(
-              controller: _userNameController,
-              txtLable: 'User Name',
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            CustomTextFormField(
-              controller: _firstNameController,
-              txtLable: 'First Name',
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            CustomTextFormField(
-              controller: _lastNameController,
-              txtLable: 'Last Name',
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            CustomDatePickerFormField(
-                controller: _dateOfBirthController,
-                txtLabel: 'Date of birth',
-                callback: () {
-                  pickDateOfBirth(context);
-                }),
+            Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    CustomTextFormField(
+                      controller: _userNameController,
+                      txtLable: 'User Name',
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    CustomTextFormField(
+                      controller: _firstNameController,
+                      txtLable: 'First Name',
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    CustomTextFormField(
+                      controller: _lastNameController,
+                      txtLable: 'Last Name',
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    CustomDatePickerFormField(
+                        controller: _dateOfBirthController,
+                        txtLabel: 'Date of birth',
+                        callback: () {
+                          pickDateOfBirth(context);
+                        }),
+                  ],
+                )),
           ],
         ),
       ),
@@ -117,29 +124,33 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   }
 
   void addEmployee() {
-    final entity = EmployeeCompanion(
-      userName: drift.Value(_userNameController.text),
-      firstName: drift.Value(_firstNameController.text),
-      lastName: drift.Value(_lastNameController.text),
-      dateOfBirth: drift.Value(_dateOfBirth!),
-    );
-    _db.insertEmployee(entity).then(
-          (value) => ScaffoldMessenger.of(context).showMaterialBanner(
-            MaterialBanner(
-              backgroundColor: Colors.deepOrange,
-              content: Text('New employee inserted: $value',
-                  style: const TextStyle(color: Colors.white)),
-              actions: [
-                TextButton(
-                    onPressed: () => ScaffoldMessenger.of(context)
-                        .hideCurrentMaterialBanner(),
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(color: Colors.white),
-                    ))
-              ],
+    final isValid = _formKey.currentState?.validate();
+
+    if (isValid != null && isValid) {
+      final entity = EmployeeCompanion(
+        userName: drift.Value(_userNameController.text),
+        firstName: drift.Value(_firstNameController.text),
+        lastName: drift.Value(_lastNameController.text),
+        dateOfBirth: drift.Value(_dateOfBirth!),
+      );
+      _db.insertEmployee(entity).then(
+            (value) => ScaffoldMessenger.of(context).showMaterialBanner(
+              MaterialBanner(
+                backgroundColor: Colors.deepOrange,
+                content: Text('New employee inserted: $value',
+                    style: const TextStyle(color: Colors.white)),
+                actions: [
+                  TextButton(
+                      onPressed: () => ScaffoldMessenger.of(context)
+                          .hideCurrentMaterialBanner(),
+                      child: const Text(
+                        'Close',
+                        style: TextStyle(color: Colors.white),
+                      ))
+                ],
+              ),
             ),
-          ),
-        );
+          );
+    }
   }
 }
